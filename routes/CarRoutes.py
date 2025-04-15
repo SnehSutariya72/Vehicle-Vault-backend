@@ -31,6 +31,11 @@ async def get_cars():
 async def get_car(car_id: str):
     return await CarController.get_car(car_id)
 
+# ✅ Get Cars by User ID
+@router.get("/user/{user_id}", response_model=List[CarModel])
+async def get_cars_by_user(user_id: str):
+    return await CarController.get_cars_by_user(user_id)
+
 # ✅ Update Car
 @router.put("/update_car/{car_id}", response_model=CarModel)
 async def update_car(

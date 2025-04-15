@@ -1,23 +1,35 @@
-from fastapi import APIRouter
-from models.RoleModel import Role,RoleOut
-from controllers.RoleController import getAllRoles,addRole,deleteRole,getRoleById
+from fastapi import APIRouter, Body, Path, HTTPException
+from typing import Dict, List
 
+from controllers.RoleController import (
+    createRole, getAllRoles, assignRoleToUser
+)
+
+# Setup router
 router = APIRouter()
 
-@router.get("/roles/")
-async def get_roles():
-    return await getAllRoles() #promise
-#{name:"",descr:""}
+# ✅ Create Role
+@router.post("/create")
+async def create_role(role_data: Dict[str, str] = Body(...)):
+    """
+    Create a new role
+    """
+    if "name" not in role_data:
+        raise HTTPException(status_code=400, detail="Role name is required")
+    return await createRole(role_data)
 
-@router.post("/role/")
-async def post_role(role:Role):
-    return await addRole(role)
+# ✅ Get All Roles
+@router.get("/")
+async def get_all_roles():
+    """
+    Retrieve all roles
+    """
+    return await getAllRoles()
 
-
-@router.delete("/role/{roleId}")
-async def delete_role(roleId:str):
-    return await deleteRole(roleId)
-
-@router.get("/role/{roleId}")
-async def get_role_byId(roleId:str):
-    return await getRoleById(roleId)
+# ✅ Assign Role to User
+@router.post("/assign")
+async def assign_role(user_id: str = Body(...), role_id: str = Body(...)):
+    """
+    Assign a role to a user
+    """
+    return await assignRoleToUser(user_id, role_id)

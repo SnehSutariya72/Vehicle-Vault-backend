@@ -1,20 +1,16 @@
-from pydantic import BaseModel,Field,validator
-from bson import ObjectId
-
-#_id:field pk obbjectId
+from pydantic import BaseModel, Field
+from typing import Optional
+import datetime
 
 class Role(BaseModel):
-    name:str
-    description:str
-
-
-#response class
-class RoleOut(Role):
-    id:str =Field(alias="_id")  
+    name: str
+    description: Optional[str] = None
+    created_at: datetime.datetime = Field(default_factory=datetime.datetime.utcnow)
     
-    @validator("id", pre=True, always=True)
-    def convert_objectId(cls,v):
-        if isinstance(v,ObjectId):
-            return str(v)  
-        
-        return v
+    class Config:
+        schema_extra = {
+            "example": {
+                "name": "Admin",
+                "description": "Administrator role with all privileges"
+            }
+        }

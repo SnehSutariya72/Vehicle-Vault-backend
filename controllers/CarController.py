@@ -65,6 +65,22 @@ class CarController:
         raise HTTPException(status_code=404, detail="Car not found")
 
     @staticmethod
+    async def get_cars_by_user(user_id: str) -> List[dict]:
+        try:
+            cars = []
+            # Log for debugging
+            print(f"Looking for cars with userId: {user_id}")
+            
+            async for car in cars_collection.find({"userId": user_id}):
+                car["_id"] = str(car["_id"])
+                cars.append(car)
+                
+            print(f"Found {len(cars)} cars for user {user_id}")
+            return cars
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
     async def update_car(
         car_id: str, make: Optional[str], model: Optional[str], price: Optional[float],
         color: Optional[str], userId: Optional[str], cityId: Optional[str], kmsDriven: Optional[int]
